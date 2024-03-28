@@ -1,6 +1,8 @@
+import { Device } from "./device"
+import { AqaraAPI } from "./../core/aqaraAPI"
 class AqaraIRDevice extends Device {
     private buttons: Array<IRButton> | null
-    constructor(did: string, name: string, modelId: string, api: ApiInstance) {
+    constructor(did: string, name: string, modelId: string, api: AqaraAPI) {
         super(did, name, modelId, api)
         this.buttons = null
     }
@@ -12,8 +14,8 @@ class AqaraIRDevice extends Device {
 
         let kwargs = new Map<String, any>()
         kwargs["did"] = this.did;
-        let intent = this.api.makePostData("query.ir.functions", kwargs)
-        return this.api.makeApiRequest(intent)
+        let intent = super.api.makePostData("query.ir.functions", kwargs)
+        return super.api.makeApiRequest(intent)
     }
 
 }

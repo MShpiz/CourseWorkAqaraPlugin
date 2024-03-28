@@ -1,4 +1,6 @@
-﻿class Device {
+﻿import { AqaraAPI } from "./../core/aqaraAPI"
+export { Device };
+class Device {
     protected did: string
     protected name: string
     protected modelId: string
