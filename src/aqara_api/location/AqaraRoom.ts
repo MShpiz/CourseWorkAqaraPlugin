@@ -1,18 +1,19 @@
 import { AqaraAPI } from "./../core/aqaraAPI"
 import { AqaraLocation } from "./AqaraLocation"
-export { AqaraRoom };
+import { AqaraHub } from "./../device/aqaraHubDevice"
+import { AqaraIRDevice } from "./../device/aqaraIRDevice"
 
-class AqaraRoom extends AqaraLocation {
+export class AqaraRoom extends AqaraLocation {
     constructor(api_instance: AqaraAPI, positionId: string | null = null, data: Map<string, any> | null = null) {
         super(api_instance, positionId, data)
     }
 
-    getDevices() {
-        let kwargs = new Map<string, string | number>([
-            ["pageNum", 1],
-            ["pageSize", super.page_size],
-            ["positionId", super.positionId]
-        ])
+    getDevices(): Array<AqaraIRDevice> {
+        let kwargs = {
+            "pageNum": 1,
+            "pageSize": this.page_size,
+            "positionId": this.positionId
+        }
         let intent = super.api.makePostData("query.device.info", kwargs)
         let dev_info = super.api.makeApiRequest(intent)
 
@@ -20,6 +21,19 @@ class AqaraRoom extends AqaraLocation {
             throw Error("empty dev info")
         }
         dev_info = dev_info["result"]["data"]
-        // return dev_info
+        // прогнатьчерез цикл и создать массив девайсов
+        //return dev_info
+        return new Array < AqaraIRDevice>()
+    }
+
+    findHub(): Array<AqaraHub> {
+        let result = Array<AqaraHub>()
+        let devices = this.getDevices()
+        for (let device of devices) {
+            if (this.api.models.includes(device.getModelId())) {
+                result.push(new AqaraHub(device.getDid(), device.getName(), device.getModelId(), this.api, device.getBrand()))
+            }
+        }
+        return result
     }
 }

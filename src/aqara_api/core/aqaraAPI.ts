@@ -10,7 +10,7 @@ class AqaraAPI {
 
     private tokens = {"access_token": null, "refresh_token": null}
 
-    private models = ["lumi.gateway.iragl7",
+    readonly models = ["lumi.gateway.iragl7",
                    "lumi.gateway.iragl5",
         "lumi.gateway.agl001"]
     private servers = ["usa", "kr", "en", "ru", "ger", "sg", "cn"]
@@ -55,18 +55,20 @@ class AqaraAPI {
     }
 
     async makeApiRequest(post_data: object) {
-        const response = await fetch(this.api_uri, {
+        let data: object
+        /*fetch(this.api_uri, {
+            method: "POST",
+            body: JSON.stringify(post_data),
+            headers: this.getRequestHeaders(this.getAccessToken())
+        }).then(result => result.json()).then(jsonResult => data = jsonResult.result.data)*/
+        let response = await fetch(this.api_uri, {
             method: "POST",
             body: JSON.stringify(post_data),
             headers: this.getRequestHeaders(this.getAccessToken())
         })
-        
 
-        const data = await response.json()
-        if (response.ok && response.body !== null) {
-            return data
-        }
-        throw Error("bad response")
+        let result = await response.json()
+        return result
     }
 
 

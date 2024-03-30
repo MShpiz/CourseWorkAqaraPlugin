@@ -1,21 +1,41 @@
 import { Device } from "./device"
 import { AqaraAPI } from "./../core/aqaraAPI"
-class AqaraIRDevice extends Device {
-    private buttons: Array<IRButton> | null
-    constructor(did: string, name: string, modelId: string, api: AqaraAPI) {
-        super(did, name, modelId, api)
+export class AqaraIRDevice extends Device {
+    protected buttons: Array<IRButton> | null
+    constructor(did: string, name: string, modelId: string, api: AqaraAPI, brand:string) {
+        super(did, name, modelId, api, brand)
         this.buttons = null
     }
 
-    GetButtons() {
+    getButtons() {
         if (this.buttons != null) {
             return this.buttons
         }
 
-        let kwargs = new Map<String, any>()
-        kwargs["did"] = this.did;
-        let intent = super.api.makePostData("query.ir.functions", kwargs)
-        return super.api.makeApiRequest(intent)
+        let buttons = this.api.makeApiRequest(this.api.makePostData("query.ir.keys", { "did": this.did }))
+        let result = this.convertToIrButtons(buttons)
+        return result
+    }
+
+    pressButton(keyId: string): boolean {
+        let data = {
+            "did": this.did,
+            "keyId": keyId.split(',')[1].trim()
+        }
+        let result = this.api.makeApiRequest(this.api.makePostData("write.ir.click", data))
+        // сделать поверку на ок if (!result)
+        return true
+    }
+    getRemoteControl() {
+        let data = {
+            "did": this.did,
+        }
+        let result = this.api.makeApiRequest(this.api.makePostData("query.ir.info", data))
+        return result
+    }
+
+    convertToIrButtons(buttons: object) {
+        //TODO
     }
 
 }

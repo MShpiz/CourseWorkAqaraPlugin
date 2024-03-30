@@ -6,9 +6,9 @@ class AqaraLocation {
     protected page_size: number = 100
     protected api: AqaraAPI
     protected positionId: string
-    protected data: Map<string, any> | null
+    protected data: object|null
 
-    constructor(api_instance: AqaraAPI, positionId: string | null = null, data: Map<string, any>|null  = null) {
+    constructor(api_instance: AqaraAPI, positionId: string | null = null, data: object|null  = null) {
         if (positionId == null && data == null) {
             throw new Error()
         }
@@ -23,8 +23,8 @@ class AqaraLocation {
         }
     }
 
-    static get_all_homes(api_instance: AqaraAPI) {
-        let intent = api_instance.makePostData("query.position.info")
+    get_all_homes(api_instance: AqaraAPI) {
+        let intent = api_instance.makePostData("query.position.info", {})
         let home_info = api_instance.makeApiRequest(intent)
 
         if (home_info["code"] == 0) {
