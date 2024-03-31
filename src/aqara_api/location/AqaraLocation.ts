@@ -23,7 +23,7 @@ class AqaraLocation {
         }
     }
 
-    get_all_homes() {
+    getAllHomes() {
         let intent = this.api.makePostData("query.position.info", {})
         let home_info = this.api.makeApiRequest(intent)
 

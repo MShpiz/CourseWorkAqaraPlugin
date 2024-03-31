@@ -1,23 +1,24 @@
 import { Service, PlatformAccessory, CharacteristicValue, API, Characteristic } from 'homebridge';
 import { AqaraIRDevice } from './aqara_api/device/aqaraIRDevice';
+import { Device } from './aqara_api/device/device';
 
-import { ExampleHomebridgePlatform } from './platform';
+import { IRManadgerPlatform } from './platform';
 
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
  * Each accessory may expose multiple services of different service types.
  */
-export class ExamplePlatformAccessory {
+export class IRAccesory {
   private service: Service;
 
     
     public readonly Characteristic: typeof Characteristic  = this.api.hap.Characteristic;
 
   constructor(
-    private readonly platform: ExampleHomebridgePlatform,
+      private readonly platform: IRManadgerPlatform,
       private readonly accessory: PlatformAccessory,
-      private deviceApi: AqaraIRDevice,
+      private deviceApi: Device,
       public readonly api: API
   ) {
     this.api = api
