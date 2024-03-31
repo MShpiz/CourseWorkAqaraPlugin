@@ -23,16 +23,16 @@ class AqaraLocation {
         }
     }
 
-    get_all_homes(api_instance: AqaraAPI) {
-        let intent = api_instance.makePostData("query.position.info", {})
-        let home_info = api_instance.makeApiRequest(intent)
+    get_all_homes() {
+        let intent = this.api.makePostData("query.position.info", {})
+        let home_info = this.api.makeApiRequest(intent)
 
         if (home_info["code"] == 0) {
             throw Error("no homes found")
         }
         let result: Array<AqaraHome> = new Array <AqaraHome>()
         home_info["result"]["data"].foreach(item => {
-            result.push(new AqaraHome(api_instance, item))
+            result.push(new AqaraHome(this.api, item))
         })
         return result
     }
