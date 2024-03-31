@@ -18,6 +18,7 @@ export class IRManadgerPlatform implements DynamicPlatformPlugin {
     // this is used to track restored cached accessories
     public readonly accessories: PlatformAccessory[] = [];
 
+    private readonly irAccesries: IRAccesory[] = []
     private rootLocation: AqaraLocation = new AqaraLocation(new AqaraAPI())
 
   constructor(
@@ -35,7 +36,7 @@ export class IRManadgerPlatform implements DynamicPlatformPlugin {
   }
 
 
-    configureAccessory(accessory: IRAccesory) {
+    configureAccessory(accessory: PlatformAccessory) {
     this.log.info('Loading accessory from cache:', accessory.displayName);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
@@ -59,7 +60,7 @@ export class IRManadgerPlatform implements DynamicPlatformPlugin {
                     const accessory = new this.api.platformAccessory(device["name"], device["did"]);
                     accessory.context.device = device;
                     let curr = new IRAccesory(this, accessory, device, this.api);
-                    this.accessories.push(curr)
+                    this.irAccesries.push(curr)
                     this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
                 }
             }
