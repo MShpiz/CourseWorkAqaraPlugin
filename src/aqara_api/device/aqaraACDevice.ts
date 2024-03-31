@@ -1,27 +1,18 @@
 import { AqaraIRDevice } from "./aqaraIRDevice"
 import { AqaraAPI } from "./../core/aqaraAPI"
-class AqaraAcDevice extends AqaraIRDevice {
+export class AqaraAcDevice extends AqaraIRDevice {
     private match: Array<string>
-    constructor(did: string, name: string, modelId: string, api: AqaraAPI, brand: string) {
-        super(did, name, modelId, api, brand)
+    constructor(did: string, name: string, model:string, api: AqaraAPI) {
+        super(did, name, model,  api)
         this.match = new Array <string>()
-        this.getMatching()
     }
 
-    getMatching() {
-        // TODO(get matching from matching tree)
-    }
-
-    getMatch() {
-        return this.match
-    }
-
-    pressButton(keyId: string): boolean {
+    pressButton(ac_btn: string): boolean {
         let data = {
             "did": this.did,
             "brandId": this.brandId,
-            "isAcMatch": this.match,
-            "keyId": keyId.split(',')[1].trim()
+            "isAcMatch": 1,
+            "acKey": ac_btn
         }
         let result = this.api.makeApiRequest(this.api.makePostData("write.ir.click", data))
         // сделать поверку на ок if (!result)

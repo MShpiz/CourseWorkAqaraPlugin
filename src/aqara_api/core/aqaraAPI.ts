@@ -1,6 +1,8 @@
 import constants from "./constants.json";
 import { Md5 } from 'ts-md5';
+import { startServer, stopServer } from "./../core/backGroundServer"
 import fetch from 'node-fetch';
+import { IncomingMessage, Server, ServerResponse } from "http";
 
 export { AqaraAPI};
 class AqaraAPI {
@@ -8,7 +10,11 @@ class AqaraAPI {
     private auth_uri = "https://open-{}.aqara.com/v3.0/open/authorize"
     private token_uri = "https://open-{}.aqara.com/v3.0/open/access_token"
 
-    private tokens = {"access_token": null, "refresh_token": null}
+    private tokens = { "access_token": null, "refresh_token": null }
+    private authTime: Date = new Date(2000, 1, 1)
+    private readonly expirationTime: number = 86400
+
+    private server: Server<typeof IncomingMessage, typeof ServerResponse>| null = null
 
     readonly models = ["lumi.gateway.iragl7",
                    "lumi.gateway.iragl5",
@@ -20,71 +26,85 @@ class AqaraAPI {
 
 
     private requestCode() {
-        
         let params = {
-            "redirect_uri": "http://127.0.0.1:11579",
+            "redirect_uri": "http://127.0.0.1:3000",
             "client_id": constants.APP_ID,
             "response_type": "code",
             "Lang": "en-EN"
         }
-        let resp = fetch(this.auth_uri + '?' + new URLSearchParams(params), {
+        fetch(this.auth_uri + '?' + new URLSearchParams(params), {
             method: "GET",
             headers: this.getRequestHeaders()
-        })
+        }).then(result => result.json()).then(jsonResult => this.showLink(jsonResult.url))
     
         //webbrowser.open(resp.request.url, new= 2, autoraise = True)
     }
 
-    authorize(server: string) {
+    private showLink(link: string) {
+        this.server = startServer(this.requestAccesToken)
+        //TODO(открыть страницу)
+    }
+
+    public authorize(server: string) {
         if (!this.servers.includes(server)) {
             throw Error("no such server")
         }
         this.initUris(server)
         if (this.tokens.access_token == null || this.tokens.refresh_token == null) {
             this.requestCode()
-            //TODO(запустить сервер) await и получить код
 
         } else if (this.tokens["refresh_token"] != null) {
-            let result = this.refreshTokens()
-            this.tokens.access_token = result.access_token
-            this.tokens.refresh_token = result.refresh_token
+            this.refreshTokens()
         } else {
             throw Error()
         }
 
     }
 
-    async makeApiRequest(post_data: object) {
-        let data: object
-        /*fetch(this.api_uri, {
+    async makeApiRequest(post_data: object): Promise<any> {
+        let timeGap = new Date().getTime() - this.authTime.getTime()
+        if (timeGap*1000 >= this.expirationTime) {
+            this.refreshTokens()
+        }
+        fetch(this.api_uri, {
             method: "POST",
             body: JSON.stringify(post_data),
             headers: this.getRequestHeaders(this.getAccessToken())
-        }).then(result => result.json()).then(jsonResult => data = jsonResult.result.data)*/
-        let response = await fetch(this.api_uri, {
-            method: "POST",
-            body: JSON.stringify(post_data),
-            headers: this.getRequestHeaders(this.getAccessToken())
-        })
+        }).then(result => result.json()).then(jsonResult => { return jsonResult["result"] })
+    }
 
-        let result = await response.json()
-        return result
+    async requestAccesToken(code: string) {
+        stopServer(this.server)
+        let data = {
+            "client_id": constants.APP_ID,
+            "client_secret": constants.APP_KEY,
+            "redirect_uri": "http://127.0.0.1:3000/",
+            "grant_type": "authorization_code",
+            "code": code
+        }
+        fetch(this.auth_uri, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: this.getRequestHeaders()
+        }).then(result => result.json()).then(jsonResult => this.setTokens(jsonResult))
     }
 
 
-    refreshTokens() {
-        if (this.tokens != null && this.tokens["refresh_token"] == null) {
+    async refreshTokens() {
+        
+        if (this.tokens == null && this.tokens["refresh_token"] == null) {
             throw Error("not authorised")
         }
         let kwargs = { "refreshToken": this.tokens["refresh_token"] }
         let intent = this.makePostData("config.auth.refreshToken",  kwargs)
-        return this.makeApiRequest(intent)
+        this.setTokens(this.makeApiRequest(intent))
     }
 
 
     private setTokens(newTokens) {
         this.tokens.access_token = newTokens.access_token
         this.tokens.refresh_token = newTokens.refresh_token
+        this.authTime = new Date()
     }
     
 

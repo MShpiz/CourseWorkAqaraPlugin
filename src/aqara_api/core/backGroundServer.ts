@@ -12,14 +12,14 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 
-function startServer(callBack: Function) {
+export function startServer(callBack: Function) {
     let server = app.listen(port);
     callBackFunc = callBack
     return server
 
 }
 
-function stoptServer(server) {
+export function stopServer(server) {
     server.close()
 }
     

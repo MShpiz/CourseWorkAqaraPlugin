@@ -2,8 +2,8 @@ import { Device } from "./device"
 import { AqaraAPI } from "./../core/aqaraAPI"
 export class AqaraIRDevice extends Device {
     protected buttons: Array<IRButton> | null
-    constructor(did: string, name: string, modelId: string, api: AqaraAPI, brand:string) {
-        super(did, name, modelId, api, brand)
+    constructor(did: string, name: string, model:string,  api: AqaraAPI) {
+        super(did, name, model,  api)
         this.buttons = null
     }
 
@@ -35,11 +35,20 @@ export class AqaraIRDevice extends Device {
     }
 
     convertToIrButtons(buttons: object) {
-        //TODO
+        if (this.buttons == null) {
+            this.buttons = new Array <IRButton>()
+        }
+        for (let btn of buttons["keys"]) {
+            this.buttons?.push(new IRButton(btn["name"], btn["controllerId"], btn["irKeyId"], btn["keyId"]))
+        }
     }
 
 }
 
 class IRButton {
-
+    constructor(public readonly name: string,
+        public readonly controllerId: string,
+        public readonly irKeyId: string,
+        public readonly keyId: string) {
+    }
 }
