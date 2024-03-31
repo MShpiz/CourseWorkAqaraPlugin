@@ -35,11 +35,20 @@ export class AqaraIRDevice extends Device {
     }
 
     convertToIrButtons(buttons: object) {
-        //TODO
+        if (this.buttons == null) {
+            this.buttons = new Array <IRButton>()
+        }
+        for (let btn of buttons["keys"]) {
+            this.buttons?.push(new IRButton(btn["name"], btn["controllerId"], btn["irKeyId"], btn["keyId"]))
+        }
     }
 
 }
 
 class IRButton {
-
+    constructor(public readonly name: string,
+        public readonly controllerId: string,
+        public readonly irKeyId: string,
+        public readonly keyId: string) {
+    }
 }

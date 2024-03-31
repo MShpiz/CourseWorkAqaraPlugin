@@ -70,7 +70,7 @@ class AqaraAPI {
             method: "POST",
             body: JSON.stringify(post_data),
             headers: this.getRequestHeaders(this.getAccessToken())
-        }).then(result => result.json()).then(jsonResult => { return jsonResult["result"]["data"] })
+        }).then(result => result.json()).then(jsonResult => { return jsonResult["result"] })
     }
 
     async requestAccesToken(code: string) {
