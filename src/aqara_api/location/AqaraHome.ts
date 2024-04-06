@@ -1,4 +1,5 @@
 import { AqaraIRDevice } from "../device/aqaraIRDevice"
+import { Device } from "../device/device"
 import { AqaraAPI } from "./../core/aqaraAPI"
 import { AqaraHub } from "./../device/aqaraHubDevice"
 import { AqaraLocation } from "./AqaraLocation"
@@ -27,9 +28,9 @@ export class AqaraHome extends AqaraLocation {
         return rooms
     }
 
-    getDevices(): Array<AqaraIRDevice> {
+    getDevices(): Array<Device> {
         let rooms: Array<AqaraRoom> = this.getRooms()
-        let devices: Array<AqaraIRDevice> = new Array<AqaraIRDevice>()
+        let devices: Array<Device> = new Array<AqaraIRDevice>()
         rooms.forEach(room => room.getDevices().forEach(device => devices.push(device)))
         return devices
     }

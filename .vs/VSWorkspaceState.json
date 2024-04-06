@@ -7,6 +7,6 @@
     "\\src\\aqara_api\\device",
     "\\src\\aqara_api\\location"
   ],
-  "SelectedNode": "\\package.json",
+  "SelectedNode": "\\src\\index.ts",
   "PreviewInSolutionExplorer": false
 }
