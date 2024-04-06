@@ -1,5 +1,6 @@
 import { AqaraIRDevice } from "./aqaraIRDevice"
 import { AqaraAPI } from "./../core/aqaraAPI"
+import { debug } from "node:util"
 export class AqaraAcDevice extends AqaraIRDevice {
     private match: Array<string>
     constructor(did: string, name: string, model:string, api: AqaraAPI) {
@@ -31,7 +32,28 @@ export class AqaraAcDevice extends AqaraIRDevice {
         let data = {
             "did": this.did,
         }
-        let result = this.api.makeApiRequest(this.api.makePostData("query.ir.acState", data))
-        return result
+         let result: string[] = this.api.makeApiRequest(this.api.makePostData("query.ir.acState", data))["acState"].split('_')
+         let state = {
+             "power": 0,
+             "mode": 0,
+             "speed": 0,
+             "temp": 0,
+         }
+         try {
+             for (let elem of result) {
+                 if (elem[0] == 'P') {
+                     state["power"] = Number(elem.slice(1))
+                 } else if (elem[0] == 'M') {
+                     state["mode"] = Number(elem.slice(1))
+                 } else if (elem[0] == 'T') {
+                     state["temp"] = Number(elem.slice(1))
+                 } else if (elem[0] == 'S') {
+                     state["speed"] = Number(elem.slice(1))
+                 }
+             }
+         } catch (e) {
+             console.log(e)
+         }
+         return state
     }
 }

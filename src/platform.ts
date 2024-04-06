@@ -3,6 +3,8 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { IRAccesory } from './platformAccessory';
 import { AqaraAPI } from './aqara_api/core/aqaraAPI';
+import { AqaraAcDevice } from './aqara_api/device/aqaraACDevice';
+import { AqaraIRDevice } from './aqara_api/device/aqaraIRDevice';
 import { AqaraLocation } from './aqara_api/location/AqaraLocation';
 import { AqaraHome } from './aqara_api/location/AqaraHome';
 
@@ -59,7 +61,16 @@ export class IRManadgerPlatform implements DynamicPlatformPlugin {
 
                     const accessory = new this.api.platformAccessory(device["name"], device["did"]);
                     accessory.context.device = device;
-                    let curr = new IRAccesory(this, accessory, device, this.api);
+
+                    let curr
+                    if (device instanceof AqaraAcDevice) {
+                        curr = new IRAccesory(this, accessory, device as AqaraAcDevice, this.api);
+                    } else if (device instanceof AqaraIRDevice) {
+                        curr = new IRAccesory(this, accessory, device as AqaraIRDevice, this.api);
+                    } else {
+                        curr = new HubAccesory(this, accessory, device as AqaraIRDevice, this.api);
+                    }
+                    
                     this.irAccesries.push(curr)
                     this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
                 }

@@ -17,11 +17,11 @@ export class IRAccesory {
     
     public readonly Characteristic: typeof Characteristic  = this.api.hap.Characteristic;
 
-  constructor(
-      private readonly platform: IRManadgerPlatform,
-      private readonly accessory: PlatformAccessory,
-      public readonly deviceApi: Device,
-      public readonly api: API
+    constructor(
+        protected readonly platform: IRManadgerPlatform,
+        protected readonly accessory: PlatformAccessory,
+        protected readonly deviceApi: AqaraIRDevice,
+        protected readonly api: API
   ) {
     this.api = api
     // set accessory information
@@ -32,7 +32,7 @@ export class IRAccesory {
       let buttonApi = (this.deviceApi as AqaraIRDevice).getButtons()
       for (let btn of buttonApi) {
           const targetControl = this.accessory.addService(this.platform.Service.TargetControl, btn.name, btn.name + btn.keyId);
-          let btnHandler = new ButtonHandler(btn, this)
+          let btnHandler = new ButtonHandler(btn, deviceApi)
 
           targetControl.addCharacteristic(this.platform.Characteristic.Active).onGet(this.getActive.bind(this))
           targetControl.addCharacteristic(this.platform.Characteristic.Active).onSet(this.setActive.bind(this))
