@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\aqara_api",
+    "\\src\\aqara_api\\core",
+    "\\src\\aqara_api\\device",
+    "\\src\\aqara_api\\location"
+  ],
+  "SelectedNode": "\\src\\index.ts",
+  "PreviewInSolutionExplorer": false
+}
