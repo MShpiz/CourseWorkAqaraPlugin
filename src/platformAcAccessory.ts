@@ -1,28 +1,28 @@
 import { Service, PlatformAccessory, CharacteristicValue, API, Characteristic } from 'homebridge';
-import { AqaraIRDevice } from './aqara_api/device/aqaraIRDevice';
 import { AqaraAcDevice } from './aqara_api/device/aqaraACDevice';
 import { IRManadgerPlatform } from './platform';
-import { Device } from './aqara_api/device/device';
-import { IRAccesory } from './platformAccessory'
+
 
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
  * Each accessory may expose multiple services of different service types.
  */
-export class ACIRAccesory extends IRAccesory {
+export class ACIRAccesory {
 
     public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
     private service: Service
     
 
     constructor(
-        platform: IRManadgerPlatform,
-        accessory: PlatformAccessory,
-        deviceApi: AqaraAcDevice,
-        api: API
+        private readonly platform: IRManadgerPlatform,
+        private readonly accessory: PlatformAccessory,
+        private readonly deviceApi: AqaraAcDevice,
+        private readonly api: API
     ) {
-        super(platform, accessory, deviceApi, api)
+        this.accessory.getService(this.platform.Service.AccessoryInformation)!
+            .setCharacteristic(this.platform.Characteristic.Manufacturer, this.deviceApi.getBrand())
+            .setCharacteristic(this.platform.Characteristic.Model, this.deviceApi.getModelId());
 
         this.service = this.accessory.addService(this.platform.Service.HeaterCooler);
         this.service.addCharacteristic(this.platform.Characteristic.Active).onGet(this.getAcActive.bind(this))

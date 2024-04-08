@@ -2,7 +2,6 @@ import { Service, PlatformAccessory, CharacteristicValue, API, Characteristic } 
 import { AqaraIRDevice } from './aqara_api/device/aqaraIRDevice';
 import { ButtonHandler } from "./platformButtons/ButtonHandler"
 import { IRManadgerPlatform } from './platform';
-import { Device } from './aqara_api/device/device';
 
 /**
  * Platform Accessory
@@ -18,10 +17,10 @@ export class IRAccesory {
     public readonly Characteristic: typeof Characteristic  = this.api.hap.Characteristic;
 
     constructor(
-        protected readonly platform: IRManadgerPlatform,
-        protected readonly accessory: PlatformAccessory,
-        protected readonly deviceApi: AqaraIRDevice,
-        protected readonly api: API
+        private readonly platform: IRManadgerPlatform,
+        private readonly accessory: PlatformAccessory,
+        private readonly deviceApi: AqaraIRDevice,
+        private readonly api: API
   ) {
     this.api = api
     // set accessory information

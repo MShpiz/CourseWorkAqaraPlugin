@@ -2,11 +2,14 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { IRAccesory } from './platformAccessory';
+import { ACIRAccesory } from './platformAcAccessory';
 import { AqaraAPI } from './aqara_api/core/aqaraAPI';
 import { AqaraAcDevice } from './aqara_api/device/aqaraACDevice';
 import { AqaraIRDevice } from './aqara_api/device/aqaraIRDevice';
 import { AqaraLocation } from './aqara_api/location/AqaraLocation';
 import { AqaraHome } from './aqara_api/location/AqaraHome';
+import { HubAccesory } from './PlatformHubAccesory'
+import { AqaraHub } from './aqara_api/device/aqaraHubDevice';
 
 /**
  * HomebridgePlatform
@@ -56,7 +59,7 @@ export class IRManadgerPlatform implements DynamicPlatformPlugin {
                     this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
                     existingAccessory.context.device = device;
                     this.api.updatePlatformAccessories([existingAccessory]);
-                    // new ExamplePlatformAccessory(this, existingAccessory);
+                    
                 } else {
 
                     const accessory = new this.api.platformAccessory(device["name"], device["did"]);
@@ -64,11 +67,11 @@ export class IRManadgerPlatform implements DynamicPlatformPlugin {
 
                     let curr
                     if (device instanceof AqaraAcDevice) {
-                        curr = new IRAccesory(this, accessory, device as AqaraAcDevice, this.api);
+                        curr = new ACIRAccesory(this, accessory, device as AqaraAcDevice, this.api);
                     } else if (device instanceof AqaraIRDevice) {
                         curr = new IRAccesory(this, accessory, device as AqaraIRDevice, this.api);
                     } else {
-                        curr = new HubAccesory(this, accessory, device as AqaraIRDevice, this.api);
+                        curr = new HubAccesory(this, accessory, device as AqaraHub, this.api);
                     }
                     
                     this.irAccesries.push(curr)
