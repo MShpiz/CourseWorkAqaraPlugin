@@ -30,6 +30,8 @@ export class ACIRAccesory {
         this.service.addCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState).onGet(this.getTargetState.bind(this))
         this.service.addCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState).onSet(this.setTargetState.bind(this))
         this.service.addCharacteristic(this.platform.Characteristic.CurrentTemperature).onSet(this.getTemp.bind(this))
+        this.service.addCharacteristic(this.platform.Characteristic.RotationSpeed).onSet(this.setRotationSpeed.bind(this))
+        this.service.addCharacteristic(this.platform.Characteristic.RotationSpeed).onGet(this.getRotationSpeed.bind(this))
     }
 
     async getAcActive() {
@@ -69,26 +71,32 @@ export class ACIRAccesory {
     }
 
     async setTargetState(characteristic) {
-        let state = {
-            "power": 0,
-            "mode": 0,
-            "speed": 0,
-            "temp": 0,
-        }
+        let curr_state = (this.deviceApi as AqaraAcDevice).getState()
         if (characteristic == this.Characteristic.TargetHeaterCoolerState.COOL) {
-            (this.deviceApi as AqaraAcDevice).pressButton("M0")
+            curr_state["mode"] = 0;
+            
         } else if (characteristic == this.Characteristic.TargetHeaterCoolerState.HEAT) {
-            (this.deviceApi as AqaraAcDevice).pressButton("M1")
+            curr_state["mode"] = 1;
         } else if (characteristic == this.Characteristic.TargetHeaterCoolerState.AUTO) {
-            (this.deviceApi as AqaraAcDevice).pressButton("M2")
+            curr_state["mode"] = 2;
         } else {
-            (this.deviceApi as AqaraAcDevice).pressButton("M2")
+            curr_state["mode"] = 2;
         }
+
+        (this.deviceApi as AqaraAcDevice).pressButton((this.deviceApi as AqaraAcDevice).makestateString(curr_state))
     }
 
     async getTemp() {
         return (this.deviceApi as AqaraAcDevice).getState()["temp"]
     }
 
+    async setRotationSpeed(speed) {
+        let currState = (this.deviceApi as AqaraAcDevice).getState()
+        currState["speed"] = speed
+        (this.deviceApi as AqaraAcDevice).pressButton((this.deviceApi as AqaraAcDevice).makestateString(currState))
+    }
 
+    async getRotationSpeed(speed) {
+        return (this.deviceApi as AqaraAcDevice).getState()["speed"]
+    }
 }

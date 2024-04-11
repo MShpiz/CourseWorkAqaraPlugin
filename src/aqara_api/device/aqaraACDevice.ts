@@ -8,15 +8,15 @@ export class AqaraAcDevice extends AqaraIRDevice {
         this.match = new Array <string>()
     }
 
-    pressButton(ac_btn: string): boolean {
+    pressButton(state: string): boolean {
         let data = {
             "did": this.did,
             "brandId": this.brandId,
             "isAcMatch": 1,
-            "acKey": ac_btn
+            "acKey": this.makestateString(state)
         }
         let result = this.api.makeApiRequest(this.api.makePostData("write.ir.click", data))
-        // сделать поверку на ок if (!result)
+        
         return true
     }
 
@@ -55,5 +55,9 @@ export class AqaraAcDevice extends AqaraIRDevice {
              console.log(e)
          }
          return state
+    }
+
+    makestateString(state): string {
+        return 'P' + state["power"] + '_' + 'M' + state["mode"] + '_' + 'T' + state["temp"] + '_' + 'S' + state["speed"]
     }
 }

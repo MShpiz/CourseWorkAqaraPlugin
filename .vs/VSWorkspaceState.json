@@ -7,6 +7,6 @@
     "\\src\\aqara_api\\device",
     "\\src\\aqara_api\\location"
   ],
-  "SelectedNode": "\\src\\index.ts",
+  "SelectedNode": "\\src\\PlatformHubAccesory.ts",
   "PreviewInSolutionExplorer": false
 }
