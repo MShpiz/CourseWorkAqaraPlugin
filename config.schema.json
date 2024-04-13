@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "AqaraIRManager",
   "pluginType": "platform",
   "singular": true,
   "schema": {
