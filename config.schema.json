@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "AqaraIRManager",
+  "pluginAlias": "IRManadgerPlatform",
   "pluginType": "platform",
   "singular": true,
   "schema": {
