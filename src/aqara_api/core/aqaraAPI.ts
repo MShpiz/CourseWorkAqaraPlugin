@@ -37,12 +37,12 @@ class AqaraAPI {
             headers: this.getRequestHeaders()
         }).then(result => result.json()).then(jsonResult => this.showLink(jsonResult.url))
     
-        //webbrowser.open(resp.request.url, new= 2, autoraise = True)
+         
     }
 
     private showLink(link: string) {
         this.server = startServer(this.requestAccesToken)
-        //TODO(открыть страницу)
+        window.location.href = "link";
     }
 
     public authorize(server: string) {
